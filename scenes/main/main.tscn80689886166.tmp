@@ -1,0 +1,204 @@
+[gd_scene load_steps=16 format=3 uid="uid://csadc4u03pk8t"]
+
+[ext_resource type="PackedScene" uid="uid://clj761l06em06" path="res://scenes/paddle/paddle.tscn" id="1_hyk8p"]
+[ext_resource type="Script" uid="uid://brwpcxyts033w" path="res://scenes/main/main.gd" id="1_k2fmo"]
+[ext_resource type="PackedScene" uid="uid://c6hxu4lsyfmwd" path="res://scenes/ball/ball.tscn" id="2_iuonh"]
+[ext_resource type="PackedScene" uid="uid://c8ndmius2fyta" path="res://scenes/brick/brick.tscn" id="2_ow5a4"]
+[ext_resource type="Texture2D" uid="uid://ccnj1p6lfie1m" path="res://assets/uncolored_castle.png" id="4_b1x3f"]
+[ext_resource type="Script" uid="uid://mffmklahwyns" path="res://scenes/main/ceiling.gd" id="4_l3cfh"]
+[ext_resource type="Script" uid="uid://b6awy45fmkqri" path="res://scenes/main/ceiling_detector.gd" id="5_6q06x"]
+[ext_resource type="Texture2D" uid="uid://m3n7ayn85gtn" path="res://assets/Spritesheet.png" id="7_hujxm"]
+[ext_resource type="Script" uid="uid://c2a6psn4t4nnw" path="res://scenes/main/game_over_screen.gd" id="8_yyfjg"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_k2fmo"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_l3cfh"]
+distance = 4.50407
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6q06x"]
+size = Vector2(1152, 14)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ow5a4"]
+size = Vector2(1152, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yyfjg"]
+atlas = ExtResource("7_hujxm")
+region = Rect2(663, 170, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_b1x3f"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yyfjg")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Main" type="Node"]
+script = ExtResource("1_k2fmo")
+brick = ExtResource("2_ow5a4")
+ball = ExtResource("2_iuonh")
+
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(575.5, 370)
+scale = Vector2(1.12402, 1)
+texture = ExtResource("4_b1x3f")
+
+[node name="Paddle" parent="." instance=ExtResource("1_hyk8p")]
+position = Vector2(587, 613)
+
+[node name="Ball" parent="." groups=["Ball"] instance=ExtResource("2_iuonh")]
+position = Vector2(587, 597)
+continuous_cd = 1
+contact_monitor = true
+max_contacts_reported = 10
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="LeftWall" type="StaticBody2D" parent="Walls"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/LeftWall"]
+rotation = 1.56698
+shape = SubResource("WorldBoundaryShape2D_k2fmo")
+
+[node name="RightWall" type="StaticBody2D" parent="Walls"]
+position = Vector2(1152, 0)
+rotation = -3.14422
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/RightWall"]
+rotation = 1.56698
+shape = SubResource("WorldBoundaryShape2D_k2fmo")
+
+[node name="Ceiling" type="StaticBody2D" parent="Walls" groups=["Ceiling"]]
+position = Vector2(551, 2.38419e-07)
+rotation = 1.57429
+script = ExtResource("4_l3cfh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Ceiling"]
+position = Vector2(-4.5913, -24.9828)
+rotation = 1.56698
+shape = SubResource("WorldBoundaryShape2D_l3cfh")
+
+[node name="Floor" type="StaticBody2D" parent="Walls" groups=["Floor"]]
+position = Vector2(594, 648)
+rotation = -1.57254
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Floor"]
+rotation = 1.56698
+shape = SubResource("WorldBoundaryShape2D_k2fmo")
+
+[node name="CeilingDetector" type="Area2D" parent="Walls"]
+script = ExtResource("5_6q06x")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/CeilingDetector"]
+position = Vector2(576, -3)
+shape = SubResource("RectangleShape2D_6q06x")
+
+[node name="FloorDetector" type="Area2D" parent="Walls"]
+script = ExtResource("5_6q06x")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/FloorDetector"]
+position = Vector2(576, 649)
+shape = SubResource("RectangleShape2D_ow5a4")
+
+[node name="Heart1" type="AnimatedSprite2D" parent="."]
+position = Vector2(19, 22)
+sprite_frames = SubResource("SpriteFrames_b1x3f")
+
+[node name="Heart2" type="AnimatedSprite2D" parent="."]
+position = Vector2(39, 22)
+sprite_frames = SubResource("SpriteFrames_b1x3f")
+
+[node name="Heart3" type="AnimatedSprite2D" parent="."]
+position = Vector2(59, 22)
+sprite_frames = SubResource("SpriteFrames_b1x3f")
+
+[node name="ScoreScreen" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScoreLabel" type="Label" parent="ScoreScreen"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -91.0
+offset_top = 10.0
+offset_right = -20.0
+offset_bottom = 46.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 50
+text = "0"
+horizontal_alignment = 2
+
+[node name="GameOverScreen" type="Control" parent="."]
+z_index = 1
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("8_yyfjg")
+
+[node name="ColorRect" type="ColorRect" parent="GameOverScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.705882)
+
+[node name="Label" type="Label" parent="GameOverScreen"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -162.5
+offset_top = 112.0
+offset_right = 162.5
+offset_bottom = 195.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 60
+text = "Game Over"
+
+[node name="Button" type="Button" parent="GameOverScreen"]
+process_mode = 3
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -38.5
+offset_right = 150.0
+offset_bottom = 38.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 50
+text = "Play Again"
+
+[node name="HighScoreLabel" type="Label" parent="GameOverScreen"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -78.0
+offset_top = 192.0
+offset_right = 79.0
+offset_bottom = 227.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 25
+text = "High Score: 0"
+
+[connection signal="body_entered" from="Walls/CeilingDetector" to="." method="_on_ceiling_detector_body_entered"]
+[connection signal="body_entered" from="Walls/FloorDetector" to="." method="_on_floor_detector_body_entered"]
+[connection signal="pressed" from="GameOverScreen/Button" to="GameOverScreen" method="_on_button_pressed"]

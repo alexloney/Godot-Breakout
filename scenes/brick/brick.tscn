@@ -1,0 +1,114 @@
+[gd_scene load_steps=9 format=3 uid="uid://c8ndmius2fyta"]
+
+[ext_resource type="Script" uid="uid://b1u2x34pfeb" path="res://scenes/brick/brick.gd" id="1_5cq3d"]
+[ext_resource type="Texture2D" uid="uid://dbmydfjjew2xc" path="res://assets/Circle.png" id="4_18nu1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hujxm"]
+size = Vector2(76, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yyfjg"]
+size = Vector2(78, 12)
+
+[sub_resource type="Curve" id="Curve_xajoh"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Animation" id="Animation_18nu1"]
+resource_name = "destroy"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BrickBody:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1e-05, 1e-05)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("BrickBody:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_hxk1n"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BrickBody:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("BrickBody:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xajoh"]
+_data = {
+&"RESET": SubResource("Animation_hxk1n"),
+&"destroy": SubResource("Animation_18nu1")
+}
+
+[node name="Brick" type="Node2D"]
+script = ExtResource("1_5cq3d")
+
+[node name="BrickBody" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BrickBody"]
+shape = SubResource("RectangleShape2D_hujxm")
+
+[node name="Line2D" type="Line2D" parent="BrickBody"]
+points = PackedVector2Array(-38, 0, 38, 0)
+default_color = Color(0.949427, 0.597379, 0.644606, 1)
+
+[node name="BrickDetector" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BrickDetector"]
+shape = SubResource("RectangleShape2D_yyfjg")
+
+[node name="Particles" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 25
+texture = ExtResource("4_18nu1")
+lifetime = 0.5
+one_shot = true
+explosiveness = 1.0
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 100.0
+initial_velocity_max = 100.0
+scale_amount_min = 0.05
+scale_amount_max = 0.25
+scale_amount_curve = SubResource("Curve_xajoh")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_xajoh")
+}
+
+[connection signal="finished" from="Particles" to="." method="_on_particles_finished"]

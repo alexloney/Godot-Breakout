@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://clj761l06em06"]
+
+[ext_resource type="Script" uid="uid://m21xegjjr3hm" path="res://scenes/paddle/paddle.gd" id="1_q5rgx"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_eletc"]
+size = Vector2(162, 10)
+
+[node name="Paddle" type="StaticBody2D"]
+script = ExtResource("1_q5rgx")
+
+[node name="Line2D" type="Line2D" parent="."]
+points = PackedVector2Array(-81, 0, 81, 0)
+default_color = Color(0, 0, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_eletc")
